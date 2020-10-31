@@ -5,27 +5,27 @@ from django.db.models.constraints import UniqueConstraint
 
 class Author(models.Model):
     """ Authors model class. """
-    firstname = models.CharField(max_length=50)
-    secondname = models.CharField(max_length=100, null=True, blank=True)
-    lastname = models.CharField(max_length=50)
+    first_name = models.CharField(max_length=50)
+    second_name = models.CharField(max_length=100, default='')
+    last_name = models.CharField(max_length=50)
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=['firstname', 'lastname'], name='unique_author')
+            UniqueConstraint(fields=['first_name', 'last_name'], name='unique_author')
         ]
 
 
     def __str__(self):
-        return f"{self.firstname} {self.secondname} {self.lastname}"
+        return f"{self.first_name} {self.second_name} {self.last_name}"
 
     def __repr__(self):
-        return f"<Author(firstname='{self.firstname}', secondname='{self.secondname}', lastname='{self.lastname}')>"
+        return f"<Author(first_name='{self.first_name}', second_name='{self.second_name}', last_name='{self.last_name}')>"
 
 
 class Book(models.Model):
     """ Books model class. """
     title = models.CharField(max_length=150)
-    pub_year = models.PositiveIntegerField(validators=[MaxValueValidator(2099)])
+    publication_year = models.PositiveIntegerField(validators=[MaxValueValidator(2099)])
     page_count = models.PositiveIntegerField(null=True, blank=True)
     cover_link = models.CharField(max_length=200, null=True, blank=True)
     language = models.CharField(max_length=50)
@@ -34,15 +34,15 @@ class Book(models.Model):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=['title', 'pub_year', 'language', 'author'], name='unique_book')
+            UniqueConstraint(fields=['title', 'publication_year', 'language', 'author'], name='unique_book')
         ]
 
 
     def __str__(self):
-        return f"{self.title} {self.pub_year}, pages: {self.page_count}, language: '{self.language}'"
+        return f"{self.title} {self.publication_year}, pages: {self.page_count}, language: '{self.language}'"
 
     def __repr__(self):
-        return f"<Book(title='{self.title}', pub_year='{self.pub_year}', page_count='{self.page_count}', cover_link='{self.cover_link}', language='{self.language}')>"
+        return f"<Book(title='{self.title}', publication_year='{self.publication_year}', page_count='{self.page_count}', cover_link='{self.cover_link}', language='{self.language}')>"
 
    
 class IsbnNumber(models.Model):
