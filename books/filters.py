@@ -11,6 +11,6 @@ class BookFilter(django_filters.FilterSet):
         model = Book
         fields = {
             'title': ['contains'],
-            'author': ['exact'],
-            'language': ['contains'],
+            'authors': ['exact'],
+            'language': ['exact'],
             }

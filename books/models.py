@@ -9,6 +9,7 @@ class Author(models.Model):
     second_name = models.CharField(max_length=100, default='')
     last_name = models.CharField(max_length=50)
 
+
     class Meta:
         constraints = [
             UniqueConstraint(fields=['first_name', 'last_name'], name='unique_author')
@@ -22,19 +23,33 @@ class Author(models.Model):
         return f"<Author(first_name='{self.first_name}', second_name='{self.second_name}', last_name='{self.last_name}')>"
 
 
+class Language(models.Model):
+    """ Languages model class. """
+    language = models.CharField(max_length=50)
+    shortcut = models.CharField(max_length=10, unique=True)
+
+    def __str__(self):
+        return f"{self.language} ({self.shortcut})"
+
+    def __repr__(self):
+        return f"<Language(language='{self.language}', shortcut='{self.shortcut}')>"
+
+
 class Book(models.Model):
     """ Books model class. """
     title = models.CharField(max_length=150)
     publication_year = models.PositiveIntegerField(validators=[MaxValueValidator(2099)])
+    isbn = models.PositiveIntegerField(null=True, blank=True)
     page_count = models.PositiveIntegerField(null=True, blank=True)
     cover_link = models.CharField(max_length=200, null=True, blank=True)
-    language = models.CharField(max_length=50)
 
-    author = models.ForeignKey(Author, related_name='books', on_delete=models.PROTECT)
+    language = models.ForeignKey(Language, related_name='books', on_delete=models.PROTECT)
+    authors = models.ManyToManyField(Author, related_name='books', through='BookAuthor')
+
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=['title', 'publication_year', 'language', 'author'], name='unique_book')
+            UniqueConstraint(fields=['title', 'publication_year', 'language'], name='unique_book')
         ]
 
 
@@ -44,18 +59,7 @@ class Book(models.Model):
     def __repr__(self):
         return f"<Book(title='{self.title}', publication_year='{self.publication_year}', page_count='{self.page_count}', cover_link='{self.cover_link}', language='{self.language}')>"
 
-   
-class IsbnNumber(models.Model):
-    """ ISBN numbers model class. """
-    isbn_core = models.CharField(max_length=13)
-    isbn_10 = models.CharField(max_length=10, null=True, blank=True)
-    isbn_13 = models.CharField(max_length=13, null=True, blank=True)
 
-    book = models.OneToOneField(Book, on_delete=models.CASCADE)
-
-
-    def __str__(self):
-        return f"ISBN_10: {self.isbn_10}, ISBN_13: {self.isbn_13}"
-
-    def __repr__(self):
-        return f"<IsbnNumber(isbn_core='{self.isbn_core}, 'isbn_10='{self.isbn_10}', isbn_13='{self.isbn_13}')>"
+class BookAuthor(models.Model):
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
