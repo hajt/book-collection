@@ -3,5 +3,9 @@
     <input type="submit" />
 </form>
 {% for obj in filter.qs %}
-    "{{ obj.title }}" {{ obj.author }} {{ obj.publication_year }} {{ obj.isbn }} {{ obj.page_count }} {{ obj.cover_link }} {{ obj.language }}<br />
+    "{{ obj.title }}" 
+    {% for author in obj.authors.all %}
+        {{ author }},
+    {% endfor %}
+    {{ obj.publication_year }}, {{ obj.isbn }}, {{ obj.page_count }}, {{ obj.cover_link }}, {{ obj.language }}<br />
 {% endfor %}
