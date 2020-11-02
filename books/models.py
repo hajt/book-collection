@@ -1,6 +1,23 @@
 from django.db import models
-from django.core.validators import MaxValueValidator
+from django.core.validators import MaxValueValidator, URLValidator
 from django.db.models.constraints import UniqueConstraint
+from django.core.exceptions import ValidationError
+
+
+PUBLISHED_YEAR_MAX = 2099
+PAGE_COUTN_MAX = 15000
+
+
+def validate_isbn(isbn):
+    """ Method for validation ISBN number. """
+    ISBN_10_MIN = 10**9
+    ISBN_10_MAX = 10**10
+    ISBN_13_MIN = 10**12
+    ISBN_13_MAX = 10**13
+    if (isbn < ISBN_10_MIN or isbn >= ISBN_10_MAX) and (isbn < ISBN_13_MIN or isbn >= ISBN_13_MAX):
+        raise ValidationError(('ISBN number should have 10 or 13 digits.'),
+            params={'isbn': isbn},
+        )
 
 
 class Author(models.Model):
@@ -38,10 +55,10 @@ class Language(models.Model):
 class Book(models.Model):
     """ Books model class. """
     title = models.CharField(max_length=150)
-    publication_year = models.PositiveIntegerField(validators=[MaxValueValidator(2099)])
-    isbn = models.PositiveIntegerField(null=True, blank=True)
-    page_count = models.PositiveIntegerField(null=True, blank=True)
-    cover_link = models.CharField(max_length=200, null=True, blank=True)
+    publication_year = models.PositiveIntegerField(validators=[MaxValueValidator(PUBLISHED_YEAR_MAX)])
+    isbn = models.PositiveIntegerField(null=True, blank=True, validators=[validate_isbn])
+    page_count = models.PositiveIntegerField(null=True, blank=True, validators=[MaxValueValidator(PAGE_COUTN_MAX)])
+    cover_link = models.URLField(max_length=200, null=True, blank=True)
 
     language = models.ForeignKey(Language, related_name='books', on_delete=models.PROTECT)
     authors = models.ManyToManyField(Author, related_name='books', through='BookAuthor')
@@ -61,5 +78,6 @@ class Book(models.Model):
 
 
 class BookAuthor(models.Model):
+    """ Model class for storing Author and Book relations. """
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
