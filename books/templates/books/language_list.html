@@ -1,3 +1,31 @@
-{% for obj in object_list %}
-    {{ obj.language }} ({{ obj.shortcut }})<br>
-{% endfor %}
+{% extends "base.html" %}
+
+{% block content %}
+
+<table border="1">
+    <thead>
+      <tr>
+        <th>Language</th>
+        <th>Shortcut</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for obj in object_list %}
+        <tr>
+            <td>{{ obj.language|default:"-" }}</td>
+            <td>({{ obj.shortcut }})</td>
+            <td>
+            <a href="{% url 'books:language-edit' obj.id %}">Edit</a>
+            <a href="{% url 'books:language-delete' obj.id %}">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">No languages</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

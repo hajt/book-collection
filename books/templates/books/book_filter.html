@@ -1,11 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+
 <form method="get">
     {{ filter.form.as_p }}
-    <input type="submit" />
+    <button type="submit">Search</button>
 </form>
-{% for obj in filter.qs %}
-    "{{ obj.title }}" 
-    {% for author in obj.authors.all %}
-        {{ author }},
+<br>
+
+<table border="1">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Publication year</th>
+        <th>ISBN</th>
+        <th>Pages</th>
+        <th>Cover</th>
+        <th>Language</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for obj in filter.qs %}
+        <tr>
+            <td>"{{ obj.title|default:"-" }}"</td>
+            <td>
+            {% for author in obj.authors.all %}
+                {{ author|default:"-" }}<br>
+            {% endfor %}
+            </td>
+            <td>{{ obj.publication_year }}</td>
+            <td>{{ obj.isbn|default:"-" }}</td>
+            <td>{{ obj.page_count|default:"-" }}</td>
+            <td>{{ obj.cover_link|default:"-" }}</td>
+            <td>{{ obj.language }}</td>
+            <td>
+            <a href="{% url 'books:book-edit' obj.id %}">Edit</a>
+            <a href="{% url 'books:book-delete' obj.id %}">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="8">No books</td>
+        </tr>
     {% endfor %}
-    {{ obj.publication_year }}, {{ obj.isbn }}, {{ obj.page_count }}, {{ obj.cover_link }}, {{ obj.language }}<br />
-{% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
