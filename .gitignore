@@ -6,3 +6,5 @@ project/__pycache__
 todo
 books/tests/__pycache__
 .vscode
+api/__pycache__
+api/tests/__pycache__
