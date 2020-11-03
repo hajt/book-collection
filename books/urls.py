@@ -13,6 +13,7 @@ from books.views import (
     LanguageCreateView, 
     LanguageUpdateView,
     LanguageDeleteView,
+    api_import
 )
 
 
@@ -30,4 +31,5 @@ urlpatterns = [
     path('language/create/', LanguageCreateView.as_view(), name='language-create'),
     path('language/<int:pk>/edit/', LanguageUpdateView.as_view(), name='language-edit'),
     path('language/<int:pk>/delete/', LanguageDeleteView.as_view(), name='language-delete'),
+    path('import/', api_import, name='api-import')
 ]

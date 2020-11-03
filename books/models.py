@@ -20,8 +20,35 @@ def validate_isbn(isbn):
         )
 
 
+class AuthorManager(models.Manager):
+    def get_or_create_many(self, authors):
+        """ Method which gets or creates (if doesn't exists) author objects
+        from passed authors string list, and returns a list with objects. """  
+        FIRST_NAME = 0
+        SECOND_NAME = 1
+        LAST_NAME = -1
+        FIRST_LETTER = 0
+        result_list = []
+        for author in authors:
+            author = author.split()
+            count = self.get_queryset().filter(last_name=author[LAST_NAME]).count() 
+            if not count:
+                obj = self.create(first_name=author[FIRST_NAME], second_name=' '.join(author[SECOND_NAME:LAST_NAME]), last_name=author[LAST_NAME])
+                result_list.append(obj)
+            else:
+                count = self.get_queryset().filter(first_name__startswith=author[FIRST_NAME][FIRST_LETTER], last_name=author[LAST_NAME]).count() 
+                if not count:
+                    obj = self.create(first_name=author[FIRST_NAME], second_name=' '.join(author[SECOND_NAME:LAST_NAME]), last_name=author[LAST_NAME])
+                    result_list.append(obj)
+                else:
+                    obj = self.get(first_name__startswith=author[FIRST_NAME][FIRST_LETTER], last_name=author[LAST_NAME])
+                    result_list.append(obj)
+        return result_list
+
+
 class Author(models.Model):
     """ Authors model class. """
+    objects = AuthorManager()
     first_name = models.CharField(max_length=50)
     second_name = models.CharField(max_length=100, default='')
     last_name = models.CharField(max_length=50)

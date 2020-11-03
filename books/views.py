@@ -1,10 +1,17 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect
 from django_filters.views import FilterView
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView
 from django.urls import reverse_lazy
 
+from django.db import IntegrityError
+
+from django.contrib import messages
+
 from books.models import Author, Book, Language
 from books.filters import BookFilter
+from books.forms import ApiImportForm
+from books.external_api import ExternalApi
 
 
 class BookFilterListView(FilterView):
@@ -72,3 +79,16 @@ class LanguageDeleteView(DeleteView):
     fields = '__all__'
     success_url = reverse_lazy('books:language-list')
     
+
+def api_import(request):
+    """ View for import data from external API. """
+    if request.method == 'POST':
+        form = ApiImportForm(request.POST)
+        if form.is_valid():
+            url = form.cleaned_data['url']
+            external_api = ExternalApi(url)
+            total = external_api.import_books()
+            return redirect('books:book-list')
+    else:
+        form = ApiImportForm()
+    return render(request, 'books/api_import.html', {'form': form})
