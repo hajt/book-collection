@@ -1,11 +1,10 @@
 from django import forms
-
-
 from urllib.parse import urlparse
 from django.core.exceptions import ValidationError
+from typing import Optional
 
 
-def validate_googleapis_hostname(url):
+def validate_googleapis_hostname(url: str) -> Optional[ValidationError]:
     """ Method for validation is hostname belongs to Google APIs. """
     url = urlparse(url)
     if url.hostname not in ['googleapis.com', 'www.googleapis.com']:

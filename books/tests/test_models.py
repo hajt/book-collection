@@ -1,10 +1,11 @@
 from django.test import TestCase
 from django import db
+from typing import Optional, List
 
 from books.models import Author, Book, Language
 
 
-def create_sample_author(first_name='Hans', second_name='Christian', last_name='Andersen'):
+def create_sample_author(first_name: str = 'Hans', second_name: str = 'Christian', last_name: str = 'Andersen') -> Author:
     """ Creating sample Author object. """
     defaults = {
         'first_name': first_name,
@@ -14,7 +15,7 @@ def create_sample_author(first_name='Hans', second_name='Christian', last_name='
     return Author.objects.create(**defaults)
 
 
-def create_sample_language(language='Polish', shortcut='pl'):
+def create_sample_language(language: str = 'Polish', shortcut: str = 'pl') -> Language:
     """ Creating sample Language object. """
     defaults = {
         'language': language,
@@ -23,7 +24,7 @@ def create_sample_language(language='Polish', shortcut='pl'):
     return Language.objects.create(**defaults)
 
 
-def create_sample_book(title='Brzydkie kaczątko', publication_year=2008, isbn=9788372783301, page_count=32, cover_link="http://books.google.com/books/content?id=fdmtAAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api", language=None, authors=None):
+def create_sample_book(title: str = 'Brzydkie kaczątko', publication_year: int = 2008, isbn: int = 9788372783301, page_count: int = 32, cover_link: str = "http://books.google.com/books/content?id=fdmtAAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api", language: Optional[Language] = None, authors: Optional[List[Author]] = None) -> Book:
     """ Creating sample Book object. """
     defaults = {
         'title': title,

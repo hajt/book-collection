@@ -1,9 +1,8 @@
 import unittest
-import json
 from unittest.mock import patch
 
 from books.external_api import ExternalApi
-from books.models import Author, Language, Book
+from books.models import Book
 from books.tests.test_models import create_sample_author, create_sample_language, create_sample_book
 
 

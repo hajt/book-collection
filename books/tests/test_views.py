@@ -1,12 +1,10 @@
-from django.urls import reverse_lazy, reverse
-from django.test import TestCase, Client
-import unittest
-from unittest.mock import patch, Mock, MagicMock
+from django.urls import reverse
+from django.test import TestCase
+from unittest.mock import patch
 
-from books.tests.test_models import create_sample_author, create_sample_language, create_sample_book
 from books.models import Author, Book, Language
-
 from books.external_api import ExternalApi
+from books.tests.test_models import create_sample_author, create_sample_language, create_sample_book
 
 
 class AuthorViewTests(TestCase):

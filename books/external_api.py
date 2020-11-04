@@ -1,4 +1,5 @@
 import requests
+from typing import Tuple, Dict, Any, Optional, List
 
 from books.models import Author, Book, Language
 
@@ -6,12 +7,12 @@ from books.models import Author, Book, Language
 class ExternalApi:
     """ Class for fetching and import data from external API. """
 
-    def __init__(self, url, headers={'Content-Type':'application/json'}):
+    def __init__(self, url: str, headers: Dict[str, str] = {'Content-Type':'application/json'}) -> None:
         self.url = url
         self.headers = headers
 
 
-    def import_books(self):
+    def import_books(self) -> int:
         """ Function which imports books into the database
         and returns the total number of imporeted books. """
         total = 0
@@ -24,7 +25,7 @@ class ExternalApi:
         return total
 
 
-    def _fetch_data(self):
+    def _fetch_data(self) -> Tuple[Dict[Any, Any], str]:
         """ Function which fetchs data and returns 
         a json and error message if occurs. """ 
         response = requests.get(self.url, headers=self.headers)
@@ -37,7 +38,7 @@ class ExternalApi:
         return data, error
 
 
-    def _create_book_obj(self, book_data):
+    def _create_book_obj(self, book_data: Dict[Any, Any]) -> bool:
         """ Function which gets Book's demandend fields from book data,
         and creates Book object (or gets from database if already exists). """
         title = self._get_title(book_data)
@@ -54,7 +55,7 @@ class ExternalApi:
         return created
 
 
-    def _get_title(self, book_data):
+    def _get_title(self, book_data: Dict[Any, Any]) -> str:
         """ Function which gets book title and subtitle from passed book data 
         and returns joined title. """        
         title = book_data.get('title')
@@ -64,7 +65,7 @@ class ExternalApi:
         return title
 
 
-    def _create_authors_obj(self, book_data):
+    def _create_authors_obj(self, book_data: Dict[Any, Any]) -> List[Author]:
         """ Function which gets list of authors from passed book data,
         returns a list with Author objects. """        
         authors = book_data.get('authors')
@@ -72,12 +73,12 @@ class ExternalApi:
         return author_objects
 
 
-    def _get_page_count(self, book_data):
+    def _get_page_count(self, book_data: Dict[Any, Any]) -> int:
         """ Function which returns a number of pages from passed book data. """ 
         return book_data.get('pageCount')
 
 
-    def _get_publication_year(self, book_data):
+    def _get_publication_year(self, book_data: Dict[Any, Any]) -> Optional[int]:
         """ Function which returns publication year from passed book data. """ 
         year = None
         date = book_data.get('publishedDate')
@@ -90,7 +91,7 @@ class ExternalApi:
         return year
 
 
-    def _create_language_obj(self, book_data):
+    def _create_language_obj(self, book_data: Dict[Any, Any]) -> Language:
         """ Function which gets language from passed book data,
         and returns a Language object. """  
         language = book_data.get('language')
@@ -98,13 +99,13 @@ class ExternalApi:
         return language_object
 
 
-    def _get_cover_link(self, book_data):
+    def _get_cover_link(self, book_data: Dict[Any, Any]) -> str:
         """ Function which returns book cover link 
         from passed book data. """ 
         return book_data.get('imageLinks', {}).get('thumbnail')
 
 
-    def _get_isbn(self, book_data):
+    def _get_isbn(self, book_data: Dict[Any, Any]) -> Optional[int]:
         """ Function which returns isbn number from passed book data. """ 
         identyfiers = book_data.get('industryIdentifiers')
         if identyfiers:

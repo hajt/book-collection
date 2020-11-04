@@ -1,14 +1,15 @@
 from django.db import models
-from django.core.validators import MaxValueValidator, URLValidator
+from django.core.validators import MaxValueValidator
 from django.db.models.constraints import UniqueConstraint
 from django.core.exceptions import ValidationError
+from typing import Optional, List, Any
 
 
 PUBLISHED_YEAR_MAX = 2099
 PAGE_COUTN_MAX = 15000
 
 
-def validate_isbn(isbn):
+def validate_isbn(isbn: int) -> Optional[ValidationError]:
     """ Method for validation ISBN number. """
     ISBN_10_MIN = 10**9
     ISBN_10_MAX = 10**10
@@ -21,7 +22,7 @@ def validate_isbn(isbn):
 
 
 class AuthorManager(models.Manager):
-    def get_or_create_many(self, authors):
+    def get_or_create_many(self, authors: List[str]) -> List[Any]:
         """ Method which gets or creates (if doesn't exists) author objects
         from passed authors string list, and returns a list with objects. """  
         FIRST_NAME = 0
