@@ -18,7 +18,7 @@ class ExternalApi:
         data, error = self._fetch_data()
         if data:
             for item in data['items']:
-                created = self._process_book_data(item['volumeInfo'])
+                created = self._create_book_obj(item['volumeInfo'])
                 if created:
                     total += 1
         return total
@@ -37,7 +37,7 @@ class ExternalApi:
         return data, error
 
 
-    def _process_book_data(self, book_data):
+    def _create_book_obj(self, book_data):
         """ Function which gets Book's demandend fields from book data,
         and creates Book object (or gets from database if already exists). """
         title = self._get_title(book_data)
@@ -45,8 +45,8 @@ class ExternalApi:
         isbn = self._get_isbn(book_data)  
         page_count = self._get_page_count(book_data)
         cover_link = self._get_cover_link(book_data)
-        language = self._get_language(book_data)
-        authors = self._get_authors(book_data)
+        language = self._create_language_obj(book_data)
+        authors = self._create_authors_obj(book_data)
         book, created = Book.objects.get_or_create(title=title, publication_year=publication_year, isbn=isbn, page_count=page_count, cover_link=cover_link, language=language)
         if created:
             book.authors.add(*authors)
@@ -64,7 +64,7 @@ class ExternalApi:
         return title
 
 
-    def _get_authors(self, book_data):
+    def _create_authors_obj(self, book_data):
         """ Function which gets list of authors from passed book data,
         returns a list with Author objects. """        
         authors = book_data.get('authors')
@@ -90,7 +90,7 @@ class ExternalApi:
         return year
 
 
-    def _get_language(self, book_data):
+    def _create_language_obj(self, book_data):
         """ Function which gets language from passed book data,
         and returns a Language object. """  
         language = book_data.get('language')
@@ -106,11 +106,9 @@ class ExternalApi:
 
     def _get_isbn(self, book_data):
         """ Function which returns isbn number from passed book data. """ 
-        isbn = None
         identyfiers = book_data.get('industryIdentifiers')
         if identyfiers:
             for identyfier in identyfiers:
                 if identyfier['type'] == "ISBN_13":
                     isbn = int(identyfier['identifier'])
-        return isbn
-
+                    return isbn

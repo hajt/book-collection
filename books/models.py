@@ -98,10 +98,10 @@ class Book(models.Model):
 
 
     def __str__(self):
-        return f"{self.title} {self.publication_year}, pages: {self.page_count}, language: '{self.language}'"
+        return f"{self.title} {self.publication_year}, isbn={self.isbn}, pages: {self.page_count}"
 
     def __repr__(self):
-        return f"<Book(title='{self.title}', publication_year='{self.publication_year}', page_count='{self.page_count}', cover_link='{self.cover_link}', language='{self.language}')>"
+        return f"<Book(title='{self.title}', publication_year='{self.publication_year}', isbn={self.isbn}, page_count='{self.page_count}', cover_link='{self.cover_link}')>"
 
 
 class BookAuthor(models.Model):
