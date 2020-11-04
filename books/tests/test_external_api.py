@@ -12,7 +12,6 @@ class TestExternalApi(unittest.TestCase):
         url = "https://www.googleapis.com/books/v1/volumes?q=Hobbit"
         self.external_api = ExternalApi(url)
 
-
     @patch('books.external_api.requests.get')
     def test_fetch_data_valid_request(self, mock_requests_get):
         """ Test fetch_data method when valid request. """
@@ -26,7 +25,6 @@ class TestExternalApi(unittest.TestCase):
         self.assertEqual(data, example_data)
         self.assertEqual(error, '')
 
-
     @patch('books.external_api.requests.get')
     def test_fetch_data_invalid_request(self, mock_requests_get):
         """ Test fetch_data method when bad request. """
@@ -36,7 +34,6 @@ class TestExternalApi(unittest.TestCase):
         self.assertEqual(data, {})
         self.assertEqual(error, 'Not found')
 
-
     def test_get_title(self):
         """ Test getting title without subtitle from json data. """
         data = {
@@ -45,16 +42,14 @@ class TestExternalApi(unittest.TestCase):
         title = self.external_api._get_title(data)
         self.assertEqual(title, 'Hobbit')
 
-
     def test_get_title_with_subtitle(self):
         """ Test getting title with subtitle from json data. """
         data = {
-            'title': 'The Hobbit', 
+            'title': 'The Hobbit',
             'subtitle': 'An Unexpected Journey'
         }
         title = self.external_api._get_title(data)
         self.assertEqual(title, 'The Hobbit: An Unexpected Journey')
-
 
     def test_create_authors_obj(self):
         """ Test creating authors objects from extracted json data. """
@@ -69,7 +64,6 @@ class TestExternalApi(unittest.TestCase):
         self.assertEqual(authors[0].first_name, 'Henryk')
         self.assertEqual(authors[1].second_name, 'Christian')
 
-
     def test_get_page_count(self):
         """ Test getting page_count from json data. """
         data = {
@@ -77,7 +71,6 @@ class TestExternalApi(unittest.TestCase):
         }
         page_count = self.external_api._get_page_count(data)
         self.assertEqual(page_count, 32)
-
 
     def test_get_publication_year_full_date(self):
         """ Test getting publication_year where full date in json data. """
@@ -87,7 +80,6 @@ class TestExternalApi(unittest.TestCase):
         publication_year = self.external_api._get_publication_year(data)
         self.assertEqual(publication_year, 2020)
 
-    
     def test_get_publication_year_only_year(self):
         """ Test getting publication_year from json data. """
         data = {
@@ -96,7 +88,6 @@ class TestExternalApi(unittest.TestCase):
         publication_year = self.external_api._get_publication_year(data)
         self.assertEqual(publication_year, 2018)
 
-        
     def test_create_language_obj(self):
         """ Test creating language object from extracted json data. """
         data = {
@@ -105,17 +96,15 @@ class TestExternalApi(unittest.TestCase):
         language = self.external_api._create_language_obj(data)
         self.assertEqual(language.shortcut, 'pl')
 
-
     def test_get_cover_link(self):
-        """ Test getting cover_link from json data. """   
+        """ Test getting cover_link from json data. """
         data = {
             'imageLinks': {
-                'thumbnail': 'https://cover_link.com' 
+                'thumbnail': 'https://cover_link.com'
             }
         }
         cover_link = self.external_api._get_cover_link(data)
         self.assertEqual(cover_link, 'https://cover_link.com')
-
 
     def test_get_isbn(self):
         """ Test getting isbn number from json data. """
@@ -129,7 +118,6 @@ class TestExternalApi(unittest.TestCase):
         }
         isbn = self.external_api._get_isbn(data)
         self.assertEqual(isbn, 1234567890123)
-    
 
     def test_get_isbn_no_isbn(self):
         """ Test getting isbn number from json data when no number. """
@@ -144,7 +132,6 @@ class TestExternalApi(unittest.TestCase):
         isbn = self.external_api._get_isbn(data)
         self.assertIsNone(isbn)
 
-
     def test_create_book_obj_new_book(self):
         """ Test creating new book object from extracted json data. """
         data = {
@@ -156,7 +143,7 @@ class TestExternalApi(unittest.TestCase):
             'publishedDate': '2018',
             'language': 'pl',
             'imageLinks': {
-                'thumbnail': 'https://cover_link.com' 
+                'thumbnail': 'https://cover_link.com'
             },
             'industryIdentifiers': [
                 {
@@ -170,9 +157,8 @@ class TestExternalApi(unittest.TestCase):
         self.assertTrue(created)
         self.assertTrue(exists)
 
-
     def test_create_book_obj_book_exists(self):
-        """ Test creating book object from extracted 
+        """ Test creating book object from extracted
         json data when book already exists. """
         language = create_sample_language()
         author = create_sample_author(
@@ -183,7 +169,7 @@ class TestExternalApi(unittest.TestCase):
         book = create_sample_book(
             title='Pan Tadeusz',
             cover_link='https://cover_link.com',
-            language=language, 
+            language=language,
             authors=[author]
         )
         data = {
@@ -195,7 +181,7 @@ class TestExternalApi(unittest.TestCase):
             'publishedDate': '2008',
             'language': 'pl',
             'imageLinks': {
-                'thumbnail': 'https://cover_link.com' 
+                'thumbnail': 'https://cover_link.com'
             },
             'industryIdentifiers': [
                 {
@@ -208,7 +194,6 @@ class TestExternalApi(unittest.TestCase):
         exists = Book.objects.filter(title='Pan Tadeusz').exists()
         self.assertFalse(created)
         self.assertTrue(exists)
-
 
     @patch.object(ExternalApi, '_fetch_data')
     def test_imbort_books_new_book(self, mocked_fetch_data):
@@ -225,7 +210,7 @@ class TestExternalApi(unittest.TestCase):
                         'publishedDate': '2008',
                         'language': 'pl',
                         'imageLinks': {
-                            'thumbnail': 'https://cover_link.com' 
+                            'thumbnail': 'https://cover_link.com'
                         },
                         'industryIdentifiers': [
                             {

@@ -8,5 +8,5 @@ from api.filters import BookFilter
 class BookViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     """ Viewset for list books. """
     serializer_class = BookSerializer
-    queryset = Book.objects.all() 
+    queryset = Book.objects.all()
     filterset_class = BookFilter

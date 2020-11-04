@@ -1,6 +1,6 @@
+from unittest.mock import patch
 from django.urls import reverse
 from django.test import TestCase
-from unittest.mock import patch
 
 from books.models import Author, Book, Language
 from books.external_api import ExternalApi
@@ -11,7 +11,6 @@ class AuthorViewTests(TestCase):
 
     def setUp(self):
         self.author = create_sample_author()
- 
 
     def test_create_author(self):
         """ Test create author view. """
@@ -24,7 +23,6 @@ class AuthorViewTests(TestCase):
         exists = Author.objects.filter(first_name=data['first_name']).exists()
         self.assertTrue(exists)
 
-
     def test_update_author(self):
         """ Test update author view. """
         author = Author.objects.first()
@@ -33,15 +31,23 @@ class AuthorViewTests(TestCase):
             'second_name': 'Ch.',
             'last_name': author.last_name
         }
-        self.client.post(reverse('books:author-edit', kwargs={'pk': author.id}), data)
+        self.client.post(
+            reverse(
+                'books:author-edit',
+                kwargs={
+                    'pk': author.id}),
+            data)
         author.refresh_from_db()
         self.assertEqual(author.second_name, 'Ch.')
-
 
     def test_delete_author(self):
         """ Test delete author view. """
         author = Author.objects.first()
-        self.client.post(reverse('books:author-delete', kwargs={'pk': author.id}))
+        self.client.post(
+            reverse(
+                'books:author-delete',
+                kwargs={
+                    'pk': author.id}))
         exists = Author.objects.filter(first_name=author.first_name).exists()
         self.assertFalse(exists)
 
@@ -61,7 +67,6 @@ class LanguageViewTests(TestCase):
         exists = Language.objects.filter(shortcut=data['shortcut']).exists()
         self.assertTrue(exists)
 
-
     def test_update_language(self):
         """ Test update language view. """
         language = Language.objects.first()
@@ -69,15 +74,23 @@ class LanguageViewTests(TestCase):
             'language': 'Polski',
             'shortcut': language.shortcut,
         }
-        self.client.post(reverse('books:language-edit', kwargs={'pk': language.id}), data)
+        self.client.post(
+            reverse(
+                'books:language-edit',
+                kwargs={
+                    'pk': language.id}),
+            data)
         language.refresh_from_db()
         self.assertEqual(language.language, 'Polski')
-
 
     def test_delete_language(self):
         """ Test delete language view. """
         language = Language.objects.first()
-        self.client.post(reverse('books:language-delete', kwargs={'pk': language.id}))
+        self.client.post(
+            reverse(
+                'books:language-delete',
+                kwargs={
+                    'pk': language.id}))
         exists = Language.objects.filter(shortcut=language.shortcut).exists()
         self.assertFalse(exists)
 
@@ -87,8 +100,9 @@ class BookViewTests(TestCase):
     def setUp(self):
         self.author = create_sample_author()
         self.language = create_sample_language()
-        self.book = create_sample_book(language=self.language, authors=[self.author])
-        
+        self.book = create_sample_book(
+            language=self.language, authors=[
+                self.author])
 
     def test_delete_book(self):
         """ Test delete book view. """
@@ -108,5 +122,9 @@ class ApiImportViewTests(TestCase):
         }
         mocked_import_books.return_value = 0
         response = self.client.post(reverse('books:api-import'), data)
-        self.assertRedirects(response, reverse('books:book-list'), status_code=302, 
-        target_status_code=200, fetch_redirect_response=True)
+        self.assertRedirects(
+            response,
+            reverse('books:book-list'),
+            status_code=302,
+            target_status_code=200,
+            fetch_redirect_response=True)

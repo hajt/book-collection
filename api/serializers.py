@@ -13,8 +13,16 @@ class AuthorSerializer(serializers.ModelSerializer):
 class BookSerializer(serializers.ModelSerializer):
     """ Serializer for Book objects. """
     authors = AuthorSerializer(many=True, read_only=True)
-    language = serializers.SlugRelatedField(slug_field='shortcut', read_only=True)
-    
+    language = serializers.SlugRelatedField(
+        slug_field='shortcut', read_only=True)
+
     class Meta:
         model = Book
-        fields = ['title', 'authors', 'publication_year', 'language', 'isbn', 'page_count', 'cover_link']
+        fields = [
+            'title',
+            'authors',
+            'publication_year',
+            'language',
+            'isbn',
+            'page_count',
+            'cover_link']

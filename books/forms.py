@@ -1,7 +1,7 @@
-from django import forms
-from urllib.parse import urlparse
-from django.core.exceptions import ValidationError
 from typing import Optional
+from urllib.parse import urlparse
+from django import forms
+from django.core.exceptions import ValidationError
 
 
 def validate_googleapis_hostname(url: str) -> Optional[ValidationError]:
@@ -13,4 +13,7 @@ def validate_googleapis_hostname(url: str) -> Optional[ValidationError]:
 
 class ApiImportForm(forms.Form):
     """ Form for passing External API URL. """
-    url = forms.URLField(label='External API URL', required=True, validators=[validate_googleapis_hostname])
+    url = forms.URLField(
+        label='External API URL',
+        required=True,
+        validators=[validate_googleapis_hostname])

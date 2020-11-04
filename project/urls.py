@@ -21,4 +21,3 @@ urlpatterns = [
     path('collection/', include(('books.urls', 'books'), namespace='books')),
     path('api/', include('api.urls'))
 ]
-
