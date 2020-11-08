@@ -47,9 +47,11 @@ class ExternalApi:
         language = self._create_language_obj(book_data)
         authors = self._create_authors_obj(book_data)
         book, created = Book.objects.get_or_create(
-            title=title, publication_year=publication_year, isbn=isbn,
-            page_count=page_count, cover_link=cover_link, language=language)
+            title=title, publication_year=publication_year, language=language)
         if created:
+            book.isbn = isbn
+            book.page_count = page_count
+            book.cover_link = cover_link
             book.authors.add(*authors)
             book.save()
         return created
